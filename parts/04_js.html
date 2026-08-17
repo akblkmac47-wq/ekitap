@@ -1,0 +1,530 @@
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SANAT ORMANI'NIN SIRRI — etkileşim motoru
+   Ses: ses/sNN.mp3 (Gemini TTS) · yoksa tarayıcı sesi yedek
+   Görsel: gorseller/*.png (Gemini) · yoksa gömülü SVG yedek
+   Tarayıcı deposu KULLANILMAZ — her şey bellekte.
+   ═══════════════════════════════════════════════════════════ */
+const sayfalar=[...document.querySelectorAll('.sayfa')];
+const TOPLAM=sayfalar.length;
+let aktif=0;
+const ANAHTARLAR={6:'çizgi',9:'şekil',12:'renk',14:'doku'};
+const durum={yildiz:new Set(),anahtar:new Set(),eser:'',duygu:'',cizdi:false};
+
+/* ─────────── ARKA PLAN PARÇACIKLARI ─────────── */
+(function parcacik(){
+  const k=document.getElementById('parcaciklar');
+  const renk=['#FF6B6B','#FFD34E','#22D3A5','#3FA9F5','#A66BFF','#FF8FC7'];
+  for(let i=0;i<26;i++){
+    const d=document.createElement('div');
+    const b=6+Math.random()*13;
+    d.className='zerre';
+    d.style.cssText=`width:${b}px;height:${b}px;background:${renk[i%renk.length]};
+      left:${Math.random()*100}%;--kay:${(Math.random()-.5)*180}px;
+      animation-duration:${13+Math.random()*16}s;animation-delay:${-Math.random()*22}s`;
+    k.appendChild(d);
+  }
+})();
+
+/* ─────────── SES EFEKTLERİ (WebAudio) ─────────── */
+let AC=null,efektAcik=true;
+function ac(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function ton(f,g,s,t='sine',v=.15){const a=ac();if(!a||!efektAcik)return;
+  const o=a.createOscillator(),n=a.createGain();o.type=t;
+  o.frequency.setValueAtTime(f,a.currentTime+g);
+  n.gain.setValueAtTime(0,a.currentTime+g);
+  n.gain.linearRampToValueAtTime(v,a.currentTime+g+.02);
+  n.gain.exponentialRampToValueAtTime(.0001,a.currentTime+g+s);
+  o.connect(n);n.connect(a.destination);o.start(a.currentTime+g);o.stop(a.currentTime+g+s+.05)}
+function kaydir(b,s,sr,t='sine',v=.1){const a=ac();if(!a||!efektAcik)return;
+  const o=a.createOscillator(),n=a.createGain();o.type=t;
+  o.frequency.setValueAtTime(b,a.currentTime);o.frequency.exponentialRampToValueAtTime(s,a.currentTime+sr);
+  n.gain.setValueAtTime(v,a.currentTime);n.gain.exponentialRampToValueAtTime(.0001,a.currentTime+sr);
+  o.connect(n);n.connect(a.destination);o.start();o.stop(a.currentTime+sr+.05)}
+const sTik   =()=>ton(880,0,.08,'triangle',.09);
+const sSecim =()=>{ton(660,0,.09,'sine',.11);ton(990,.05,.10,'sine',.08)};
+const sDogru =()=>{ton(523,0,.13);ton(659,.08,.13);ton(784,.16,.22)};
+const sYanlis=()=>{ton(233,0,.15,'square',.09);ton(175,.12,.22,'square',.09)};
+const sYildiz=()=>[523,659,784,1047,1319].forEach((f,i)=>ton(f,i*.07,.26,'triangle',.13));
+const sAnahtar=()=>{[784,988,1175,1568].forEach((f,i)=>ton(f,i*.09,.4,'sine',.15));kaydir(400,1600,.5,'triangle',.06)};
+const sSayfa =()=>kaydir(320,880,.2,'sine',.06);
+const sFirca =()=>ton(150+Math.random()*90,0,.045,'sawtooth',.028);
+function efektDegis(){efektAcik=!efektAcik;
+  document.getElementById('btnEfekt').textContent=efektAcik?'🔔':'🔕';if(efektAcik)sSecim()}
+
+/* ─────────── ANLATIM SESİ (Gemini mp3 + yedek) ─────────── */
+let otoSes=true, calan=null, mevcutSes=null, sesVar={};
+const dalga=document.getElementById('dalga'), ilerleCubuk=document.getElementById('sesIlerle');
+const btnOynat=document.getElementById('btnOynat');
+
+function sesDosyaAdi(i,uzanti){return 'ses/s'+String(i+1).padStart(2,'0')+'.'+(uzanti||'mp3')}
+
+function sesHazirla(i,uzanti){
+  if(mevcutSes){mevcutSes.pause();mevcutSes=null}
+  const a=new Audio(sesDosyaAdi(i,uzanti));
+  a.preload='auto';
+  a.addEventListener('timeupdate',()=>{
+    if(a.duration) ilerleCubuk.style.width=(a.currentTime/a.duration*100)+'%'});
+  a.addEventListener('ended',()=>{durdurGorsel()});
+  a.addEventListener('error',()=>{sesVar[i]=false});
+  return a;
+}
+function anlatimBaslat(){
+  const m=sayfalar[aktif].dataset.ses||'';
+  const hedef=aktif;
+  ilerleCubuk.style.width='0%';
+  const dene=(uzanti,sonraki)=>{
+    const a=sesHazirla(hedef,uzanti);
+    a.play().then(()=>{ if(aktif!==hedef){a.pause();return}
+        mevcutSes=a;sesVar[hedef]=uzanti;calan='dosya';oynatGorsel(); })
+     .catch(()=>{ sonraki(); });
+  };
+  // 1) Gemini mp3  → 2) Gemini wav  → 3) tarayıcı sesi (yedek)
+  dene('mp3',()=>dene('wav',()=>{ sesVar[hedef]=false; tarayiciOku(m); }));
+}
+function tarayiciOku(metin){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(metin);
+  u.lang='tr-TR';u.rate=.93;u.pitch=1.08;
+  const tr=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().startsWith('tr'));
+  if(tr)u.voice=tr;
+  u.onend=()=>durdurGorsel(); u.onstart=()=>oynatGorsel();
+  calan='tts'; speechSynthesis.speak(u);
+  let p=0; clearInterval(u._t);
+  u._t=setInterval(()=>{p=Math.min(100,p+2);ilerleCubuk.style.width=p+'%';
+    if(!speechSynthesis.speaking){clearInterval(u._t);ilerleCubuk.style.width='100%'}},220);
+}
+function sesDurdur(){
+  if(mevcutSes){mevcutSes.pause();mevcutSes.currentTime=0}
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+  durdurGorsel();
+}
+function sesOynatDurdur(){
+  if(calan){sesDurdur();return}
+  anlatimBaslat();
+}
+function oynatGorsel(){dalga.classList.add('calisiyor');btnOynat.textContent='⏸ Durdur'}
+function durdurGorsel(){dalga.classList.remove('calisiyor');btnOynat.textContent='▶︎ Dinle';calan=null}
+function otoDegis(){otoSes=!otoSes;
+  document.getElementById('btnOto').textContent=otoSes?'🎵 Oto: Açık':'🔇 Oto: Kapalı';
+  if(otoSes)anlatimBaslat();else sesDurdur()}
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
+
+/* ─────────── GEMİNİ GÖRSELLERİNİ DEVREYE AL ─────────── */
+(function gorselleriYukle(){
+  document.querySelectorAll('.gorselKutu[data-img]').forEach(kutu=>{
+    const yol='gorseller/'+kutu.dataset.img;
+    const im=new Image();
+    im.onload=()=>{
+      const svg=kutu.querySelector('svg'); if(svg)svg.style.display='none';
+      im.alt=''; kutu.appendChild(im);
+    };
+    im.onerror=()=>{}; // sessizce SVG vekilinde kal
+    im.src=yol;
+  });
+})();
+
+/* ─────────── NAVİGASYON ─────────── */
+const noktaKutu=document.getElementById('noktalar');
+sayfalar.forEach((s,i)=>{const b=document.createElement('button');
+  b.className='nokta';b.textContent=i+1;b.title='Sayfa '+(i+1);b.onclick=()=>git(i);noktaKutu.appendChild(b)});
+function git(i){
+  if(i<0||i>=TOPLAM)return;
+  const yon=i>aktif?'ileri':'geri';
+  sesDurdur(); sSayfa();
+  sayfalar[aktif].classList.remove('aktif','ileri','geri');
+  aktif=i;
+  const s=sayfalar[aktif];
+  s.classList.add('aktif',yon);
+  s.querySelector('.ic').scrollTop=0;
+  cizgileriYenidenCiz();
+  noktaGuncelle();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(otoSes)setTimeout(()=>{if(aktif===i)anlatimBaslat()},560);
+}
+function cizgileriYenidenCiz(){
+  document.querySelectorAll('.sCiz').forEach(el=>{el.style.animation='none';void el.getBoundingClientRect();el.style.animation=''})}
+function sonraki(){git(aktif+1)} function onceki(){git(aktif-1)}
+function noktaGuncelle(){[...noktaKutu.children].forEach((b,i)=>{
+  b.classList.toggle('aktif',i===aktif);b.classList.toggle('bitti',durum.yildiz.has(i))})}
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;
+  if(e.key==='ArrowRight')sonraki(); if(e.key==='ArrowLeft')onceki();
+  if(e.key===' '){e.preventDefault();sesOynatDurdur()}});
+
+/* ─────────── TIKLAMA DALGACIĞI ─────────── */
+document.addEventListener('pointerdown',e=>{
+  ac();
+  const k=e.target.closest('.kart,.hedef,.btn,.fircaBtn'); if(!k)return;
+  const r=k.getBoundingClientRect(),d=document.createElement('span');
+  const b=Math.max(r.width,r.height);
+  d.className='dalgacik';
+  d.style.cssText=`width:${b}px;height:${b}px;left:${e.clientX-r.left-b/2}px;top:${e.clientY-r.top-b/2}px`;
+  if(getComputedStyle(k).position==='static')k.style.position='relative';
+  k.appendChild(d);setTimeout(()=>d.remove(),560);
+});
+
+/* ─────────── YILDIZ & ANAHTAR ─────────── */
+function yildizVer(idx){
+  if(durum.yildiz.has(idx))return;
+  durum.yildiz.add(idx);
+  const yk=document.getElementById('yildizKutu');
+  yk.textContent='⭐ '+durum.yildiz.size+'/9';
+  yk.classList.remove('artis');void yk.offsetWidth;yk.classList.add('artis');
+  konfeti(); sYildiz(); noktaGuncelle();
+  document.getElementById('belgeYildiz').textContent='⭐'.repeat(durum.yildiz.size);
+  if(ANAHTARLAR[idx]) anahtarVer(ANAHTARLAR[idx]);
+}
+function anahtarVer(ad){
+  if(durum.anahtar.has(ad))return;
+  durum.anahtar.add(ad);
+  const k=document.getElementById('anahtarKutu');
+  k.textContent='🔑 '+durum.anahtar.size+'/4 anahtar';
+  k.classList.remove('artis');void k.offsetWidth;k.classList.add('artis');
+  document.getElementById('gAnahtar').value=durum.anahtar.size+' / 4 ('+[...durum.anahtar].join(', ')+')';
+  const sira={'çizgi':'d1','şekil':'d2','renk':'d3','doku':'d4'}[ad];
+  const kart=document.getElementById(sira); if(kart)kart.classList.add('tamam');
+  setTimeout(()=>{sAnahtar();anahtarGoster(ad)},280);
+}
+function anahtarGoster(ad){
+  const d=document.createElement('div');
+  d.style.cssText=`position:fixed;z-index:200;left:50%;top:42%;transform:translate(-50%,-50%) scale(.4);
+    background:linear-gradient(160deg,#FFF6D8,#FFE39B);border:5px solid #FFB300;border-radius:26px;
+    padding:20px 30px;text-align:center;font-weight:900;box-shadow:0 26px 60px rgba(0,0,0,.35);pointer-events:none`;
+  d.innerHTML=`<div style="font-size:56px;line-height:1">🔑</div>
+    <div style="font-size:13px;letter-spacing:2px;color:#8A6100">ANAHTAR KAZANDIN</div>
+    <div style="font-size:26px;color:#1B6CA8;text-transform:uppercase">${ad}</div>`;
+  document.body.appendChild(d);
+  d.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:0},
+             {transform:'translate(-50%,-50%) scale(1.06)',opacity:1,offset:.28},
+             {transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.72},
+             {transform:'translate(-50%,-58%) scale(.9)',opacity:0}],
+            {duration:2100,easing:'cubic-bezier(.2,.9,.3,1)'}).onfinish=()=>d.remove();
+}
+function konfeti(){
+  const renk=['#FF6B6B','#FFD34E','#22D3A5','#3FA9F5','#A66BFF','#FF8FC7'];
+  for(let i=0;i<42;i++){
+    const d=document.createElement('div');
+    const b=7+Math.random()*8;
+    d.style.cssText=`position:fixed;z-index:150;width:${b}px;height:${b}px;border-radius:${Math.random()>.5?'50%':'3px'};
+      pointer-events:none;background:${renk[i%renk.length]};left:${44+Math.random()*12}%;top:30%`;
+    document.body.appendChild(d);
+    const x=(Math.random()-.5)*860,y=240+Math.random()*380,r=Math.random()*900;
+    d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},
+               {transform:`translate(${x}px,${y}px) rotate(${r}deg)`,opacity:0}],
+      {duration:1200+Math.random()*800,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>d.remove();
+  }
+}
+
+/* ═══════ ETKİNLİK 1 — HANGİSİ DOĞRU ÇİZGİ? ═══════ */
+const CIZGILER=[{ad:'DÜZ',id:'cz-duz'},{ad:'DALGALI',id:'cz-dalgali'},
+                {ad:'ZİKZAK',id:'cz-zikzak'},{ad:'KIVRIMLI',id:'cz-kivrimli'},{ad:'KESİK',id:'cz-kesik'}];
+const E1SORU=[{soru:'Hangisi <b>ZİKZAK</b> çizgi?',dogru:'ZİKZAK'},
+              {soru:'Hangisi <b>DALGALI</b> çizgi?',dogru:'DALGALI'},
+              {soru:'Hangisi <b>KIVRIMLI</b> çizgi?',dogru:'KIVRIMLI'}];
+let e1Dogru=0;
+(function e1Kur(){
+  const kutu=document.getElementById('e1');
+  E1SORU.forEach((s,si)=>{
+    const sat=document.createElement('div');
+    sat.style.cssText='background:#fff;border:3px solid #EFE8FB;border-radius:19px;padding:9px 13px;display:flex;align-items:center;gap:12px;flex-wrap:wrap';
+    const b=document.createElement('b'); b.style.cssText='font-size:16px;min-width:190px'; b.innerHTML=s.soru;
+    sat.appendChild(b);
+    const sec=[...CIZGILER].sort((x,y)=>(x.ad+si).localeCompare(y.ad+si)).slice(0,4);
+    if(!sec.some(c=>c.ad===s.dogru)) sec[0]=CIZGILER.find(c=>c.ad===s.dogru);
+    sec.forEach(c=>{
+      const d=document.createElement('div');
+      d.className='kart'; d.style.cssText='flex:1;min-width:96px;padding:5px';
+      d.innerHTML=`<svg viewBox="0 0 200 70" style="height:34px"><use href="#${c.id}" width="200" height="70"/></svg>`;
+      d.onclick=()=>{
+        if(sat.dataset.bitti)return;
+        if(c.ad===s.dogru){
+          sat.dataset.bitti='1'; d.classList.add('dogru');
+          sat.style.borderColor='#22D3A5'; sat.style.background='#E9FBF4';
+          sat.querySelectorAll('.kart').forEach(x=>{if(x!==d)x.classList.add('pasif')});
+          const et=document.createElement('b'); et.textContent='✓ '+c.ad; et.style.color='#06795B'; sat.appendChild(et);
+          sDogru(); e1Dogru++;
+          const g=document.getElementById('e1geri');
+          if(e1Dogru===E1SORU.length){g.className='geribildirim ok';g.textContent='🌟 Kıvrım gülümsedi: “Çizgileri çok iyi tanıyorsun!”';yildizVer(5)}
+          else{g.className='geribildirim ok';g.textContent='✅ Doğru! '+e1Dogru+'/'+E1SORU.length}
+        }else{
+          d.classList.add('yanlis'); setTimeout(()=>d.classList.remove('yanlis'),450); sYanlis();
+          const g=document.getElementById('e1geri');g.className='geribildirim no';g.textContent='🤔 Bir daha bak — '+s.dogru.toLowerCase()+' çizgiyi arıyoruz.';
+        }
+      };
+      sat.appendChild(d);
+    });
+    kutu.appendChild(sat);
+  });
+})();
+
+/* ═══════ ETKİNLİK 2/3/7 — EŞLEŞTİRME MOTORU ═══════ */
+let secili=null;
+function esSec(el){
+  if(el.classList.contains('pasif'))return;
+  const s=el.closest('.sayfa');
+  s.querySelectorAll('.es-kaynak').forEach(k=>k.classList.remove('secili'));
+  el.classList.add('secili');secili=el;sSecim();
+}
+function esBirak(hedef){
+  const sayfa=hedef.closest('.sayfa');
+  if(!secili){esMesaj(sayfa,'👆 Önce yukarıdan bir resim seç.',false);return}
+  if(secili.closest('.sayfa')!==sayfa)return;
+  if(hedef.classList.contains('dolu'))return;
+  if(hedef.dataset.cift===secili.dataset.cift){
+    const kopya=secili.querySelector('svg,.emoji').cloneNode(true);
+    kopya.removeAttribute('class');kopya.style.cssText='width:38px;height:38px;font-size:26px;line-height:1';
+    hedef.prepend(kopya);hedef.classList.add('dolu');
+    secili.classList.remove('secili');secili.classList.add('dogru','pasif');secili=null;
+    sDogru();esMesaj(sayfa,'✅ Doğru! Devam et.',true);esKontrol(sayfa);
+  }else{
+    const y=secili;hedef.classList.add('yanlis');y.classList.add('yanlis');sYanlis();
+    setTimeout(()=>{hedef.classList.remove('yanlis');y.classList.remove('yanlis')},460);
+    esMesaj(sayfa,'🤔 Bu ikisi uymadı. Bir daha dene!',false);
+  }
+}
+function esMesaj(sayfa,msg,ok){const g=sayfa.querySelector('.geribildirim');
+  if(!g)return;g.className='geribildirim '+(ok?'ok':'no');g.textContent=msg}
+function esKontrol(sayfa){
+  const kalan=[...sayfa.querySelectorAll('.es-kaynak')].filter(k=>!k.classList.contains('pasif')).length;
+  if(kalan===0){
+    const g=sayfa.querySelector('.geribildirim');
+    g.className='geribildirim ok';g.textContent='🌟 Tebrikler! Hepsini doğru eşleştirdin.';
+    yildizVer(sayfalar.indexOf(sayfa));
+  }
+}
+
+/* ═══════ ETKİNLİK 4 — ŞEKİLLERİ SAY ═══════ */
+const E4=[{soru:'Resimde kaç tane <b>ÜÇGEN</b> var?',dogru:3,secenek:[2,3,4]},
+          {soru:'Resimde kaç tane <b>KARE</b> var?',dogru:2,secenek:[2,3,5]},
+          {soru:'Resimde kaç tane <b>DAİRE</b> var?',dogru:3,secenek:[1,3,4]}];
+let e4Dogru=0;
+(function e4Kur(){
+  const kutu=document.getElementById('e4');
+  E4.forEach(s=>{
+    const sat=document.createElement('div');
+    sat.style.cssText='background:#fff;border:3px solid #EFE8FB;border-radius:18px;padding:10px 13px';
+    sat.innerHTML=`<div style="font-weight:900;font-size:16px;margin-bottom:7px">${s.soru}</div>`;
+    const sira=document.createElement('div');sira.style.cssText='display:flex;gap:8px';
+    s.secenek.forEach(n=>{
+      const b=document.createElement('button');b.className='btn sari';b.style.cssText='flex:1;font-size:19px';
+      b.textContent=n;
+      b.onclick=()=>{
+        if(sat.dataset.bitti)return;
+        if(n===s.dogru){
+          sat.dataset.bitti='1';sat.style.borderColor='#22D3A5';sat.style.background='#E9FBF4';
+          sira.querySelectorAll('button').forEach(x=>x.disabled=true);
+          b.style.background='#22D3A5';b.style.color='#06392C';b.textContent='✓ '+n;
+          sDogru();e4Dogru++;
+          const g=document.getElementById('e4geri');
+          if(e4Dogru===E4.length){g.className='geribildirim ok';g.textContent='🌟 Köşe başını salladı: “Sayman mükemmel!”';yildizVer(9)}
+          else{g.className='geribildirim ok';g.textContent='✅ Doğru! '+e4Dogru+'/'+E4.length}
+        }else{
+          b.animate([{transform:'translateX(0)'},{transform:'translateX(-7px)'},{transform:'translateX(7px)'},{transform:'translateX(0)'}],{duration:320});
+          sYanlis();
+          const g=document.getElementById('e4geri');g.className='geribildirim no';g.textContent='🤔 Tekrar say — parmağınla göstererek saymayı dene!';
+        }
+      };
+      sira.appendChild(b);
+    });
+    sat.appendChild(sira);kutu.appendChild(sat);
+  });
+})();
+
+/* ═══════ ETKİNLİK 5 — RENK KARIŞIMI ═══════ */
+const E5=[{a:'#FF3B3B',an:'Kırmızı',b:'#FFD100',bn:'Sarı',dogru:'Turuncu',
+           sec:[{ad:'Turuncu',r:'#FF8A00'},{ad:'Yeşil',r:'#25C685'},{ad:'Mor',r:'#8E4FE0'}]},
+          {a:'#FFD100',an:'Sarı',b:'#2D7DFF',bn:'Mavi',dogru:'Yeşil',
+           sec:[{ad:'Mor',r:'#8E4FE0'},{ad:'Yeşil',r:'#25C685'},{ad:'Turuncu',r:'#FF8A00'}]},
+          {a:'#FF3B3B',an:'Kırmızı',b:'#2D7DFF',bn:'Mavi',dogru:'Mor',
+           sec:[{ad:'Yeşil',r:'#25C685'},{ad:'Turuncu',r:'#FF8A00'},{ad:'Mor',r:'#8E4FE0'}]}];
+let e5Dogru=0;
+(function e5Kur(){
+  const kutu=document.getElementById('e5');
+  E5.forEach(s=>{
+    const sat=document.createElement('div');
+    sat.style.cssText='display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:3px solid #EFE8FB;border-radius:19px;padding:9px 13px';
+    const yuvarlak=c=>`<span style="width:42px;height:42px;border-radius:50%;background:${c};border:3px solid #3A2C22;display:inline-block"></span>`;
+    sat.innerHTML=`${yuvarlak(s.a)}<b style="font-size:21px">+</b>${yuvarlak(s.b)}<b style="font-size:21px">=</b>
+                   <b class="sonuc" style="font-size:23px;color:#A66BFF">?</b><span style="flex:1"></span>`;
+    s.sec.forEach(c=>{
+      const b=document.createElement('button');b.className='btn';
+      b.style.cssText=`background:${c.r};color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.32)`;b.textContent=c.ad;
+      b.onclick=()=>{
+        if(sat.dataset.bitti)return;
+        if(c.ad===s.dogru){
+          sat.dataset.bitti='1';sat.style.borderColor='#22D3A5';sat.style.background='#E9FBF4';
+          const son=sat.querySelector('.sonuc');
+          son.outerHTML=`<span style="width:42px;height:42px;border-radius:50%;background:${c.r};border:3px solid #3A2C22;display:inline-block"></span><b style="color:${c.r}">${c.ad}</b>`;
+          sat.querySelectorAll('button').forEach(x=>x.disabled=true);
+          sDogru();e5Dogru++;
+          const g=document.getElementById('e5geri');
+          if(e5Dogru===E5.length){g.className='geribildirim ok';g.textContent='🌈 Ebru kanat çırptı: “Renklerin sırrını çözdün!”';yildizVer(11)}
+          else{g.className='geribildirim ok';g.textContent='✅ Doğru! '+e5Dogru+'/'+E5.length}
+        }else{
+          b.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:320});
+          sYanlis();
+          const g=document.getElementById('e5geri');g.className='geribildirim no';g.textContent='🤔 Bir daha düşün: '+s.an+' + '+s.bn+' = ?';
+        }
+      };
+      sat.appendChild(b);
+    });
+    kutu.appendChild(sat);
+  });
+})();
+
+/* ═══════ ETKİNLİK 6 — SICAK / SOĞUK ═══════ */
+let ssSecili=null,ssYerlesen=0;
+function ssSec(el){
+  if(el.classList.contains('pasif'))return;
+  document.querySelectorAll('#e6renkler .kart').forEach(k=>k.classList.remove('secili'));
+  el.classList.add('secili');ssSecili=el;sSecim();
+}
+function ssBirak(kutu){
+  const g=document.getElementById('e6geri');
+  if(!ssSecili){g.className='geribildirim no';g.textContent='👆 Önce bir renge dokun.';return}
+  if(kutu.dataset.grup===ssSecili.dataset.grup){
+    const e=ssSecili.querySelector('.emoji').cloneNode(true);
+    e.removeAttribute('class');e.style.cssText='font-size:26px;line-height:1';
+    kutu.querySelector('.ss-icerik').appendChild(e);
+    ssSecili.classList.add('dogru','pasif');ssSecili.classList.remove('secili');ssSecili=null;
+    ssYerlesen++;sDogru();
+    if(ssYerlesen===6){g.className='geribildirim ok';g.textContent='🌟 Harika! Sıcak ve soğuk renkleri ayırt edebiliyorsun.';yildizVer(12)}
+    else{g.className='geribildirim ok';g.textContent='✅ Doğru! '+ssYerlesen+'/6'}
+  }else{
+    kutu.classList.add('yanlis');const y=ssSecili;y.classList.add('yanlis');sYanlis();
+    setTimeout(()=>{kutu.classList.remove('yanlis');y.classList.remove('yanlis')},460);
+    g.className='geribildirim no';g.textContent='🤔 Sıcak renkler ateşi, soğuk renkler suyu hatırlatır. Tekrar dene!';
+  }
+}
+
+/* ═══════ ETKİNLİK 8 — GALERİ ═══════ */
+function e8Sec(el){
+  document.querySelectorAll('#e8 .kart').forEach(k=>k.classList.remove('secili'));
+  el.classList.add('secili');durum.eser=el.dataset.eser;sSecim();
+  document.getElementById('e8soru').innerHTML='<b>“'+durum.eser+'”</b> sana ne hissettiriyor? Aşağıdan seç.';
+  const d=document.getElementById('e8duygu');d.style.opacity='1';d.style.pointerEvents='auto';
+  gunlukGuncelle();
+}
+function e8Duygu(el,ad){
+  document.querySelectorAll('#e8duygu .kart').forEach(k=>k.classList.remove('secili'));
+  el.classList.add('secili');durum.duygu=ad;sDogru();
+  const g=document.getElementById('e8geri');g.className='geribildirim ok';
+  g.textContent='💬 “'+durum.eser+'” sana '+ad.toLowerCase()+' hissettiriyor. Fırçacan: “Her göz farklı görür, işte sanat bu!”';
+  yildizVer(15);gunlukGuncelle();
+}
+
+/* ═══════ ETKİNLİK 9 — DİJİTAL TUVAL ═══════ */
+const tuval=document.getElementById('tuval'),ctx=tuval.getContext('2d');
+let renk='#FF3B3B',kalinlik=15,damga='',doku='',ciziyor=false,gecmis=[];
+const palet=['#FF3B3B','#FF8A00','#FFD100','#25C685','#0FA36B','#2D7DFF','#8E4FE0','#FF8FC7',
+             '#8B5E3C','#33294B','#FFFFFF','#00C2CB'];
+(function paletKur(){
+  const k=document.getElementById('paletKutu');
+  palet.forEach((c,i)=>{const d=document.createElement('div');
+    d.className='renkNokta'+(i===0?' secili':'');d.style.background=c;
+    d.onclick=()=>{renk=c;sTik();[...k.children].forEach(x=>x.classList.remove('secili'));d.classList.add('secili')};
+    k.appendChild(d)});
+})();
+function fircaSec(b,k){kalinlik=k;sTik();b.parentNode.querySelectorAll('.fircaBtn').forEach(x=>x.classList.remove('secili'));b.classList.add('secili')}
+function damgaSec(b,d){damga=d;sTik();b.parentNode.querySelectorAll('.fircaBtn').forEach(x=>x.classList.remove('secili'));b.classList.add('secili')}
+function dokuSec(b,d){doku=d;sTik();b.parentNode.querySelectorAll('.fircaBtn').forEach(x=>x.classList.remove('secili'));b.classList.add('secili')}
+function arkaCiz(){ctx.fillStyle='#fff';ctx.fillRect(0,0,tuval.width,tuval.height)}
+arkaCiz();
+function anlikKaydet(){gecmis.push(ctx.getImageData(0,0,tuval.width,tuval.height));if(gecmis.length>14)gecmis.shift()}
+function tuvalGeriAl(){if(!gecmis.length)return;ctx.putImageData(gecmis.pop(),0,0);sTik()}
+function koord(e){const r=tuval.getBoundingClientRect();
+  return{x:(e.clientX-r.left)*(tuval.width/r.width),y:(e.clientY-r.top)*(tuval.height/r.height)}}
+function damgaBas(x,y){
+  ctx.fillStyle=renk;ctx.strokeStyle='#33294B';ctx.lineWidth=4;const b=kalinlik*3.2;
+  ctx.beginPath();
+  if(damga==='daire')ctx.arc(x,y,b,0,7);
+  else if(damga==='kare')ctx.rect(x-b,y-b,b*2,b*2);
+  else if(damga==='ucgen'){ctx.moveTo(x,y-b);ctx.lineTo(x+b,y+b);ctx.lineTo(x-b,y+b);ctx.closePath()}
+  else{for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,rr=i%2?b*.45:b;
+    ctx[i?'lineTo':'moveTo'](x+Math.cos(a)*rr,y+Math.sin(a)*rr)}ctx.closePath()}
+  ctx.fill();ctx.stroke();
+}
+function dokuBas(x,y){
+  ctx.fillStyle=renk;
+  const n=doku==='puruzlu'?16:7,yay=kalinlik*1.5;
+  for(let i=0;i<n;i++){
+    const a=Math.random()*7,r=Math.random()*yay;
+    const b=doku==='puruzlu'?1.6+Math.random()*2.6:2.4+Math.random()*3.4;
+    ctx.beginPath();ctx.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,b,0,7);ctx.fill();
+  }
+}
+tuval.addEventListener('pointerdown',e=>{
+  tuval.setPointerCapture(e.pointerId);anlikKaydet();
+  const p=koord(e);
+  if(damga){damgaBas(p.x,p.y);sSecim();durum.cizdi=true;yildizVer(16);return}
+  ciziyor=true;
+  if(doku){dokuBas(p.x,p.y)}
+  else{ctx.strokeStyle=renk;ctx.lineWidth=kalinlik;ctx.lineCap='round';ctx.lineJoin='round';
+       ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+.1,p.y+.1);ctx.stroke()}
+  durum.cizdi=true;yildizVer(16);
+});
+let sonSes=0;
+tuval.addEventListener('pointermove',e=>{
+  if(!ciziyor)return;const p=koord(e);
+  if(doku)dokuBas(p.x,p.y); else{ctx.lineTo(p.x,p.y);ctx.stroke()}
+  const t=performance.now();if(t-sonSes>85){sonSes=t;sFirca()}
+});
+['pointerup','pointerleave','pointercancel'].forEach(t=>tuval.addEventListener(t,()=>ciziyor=false));
+function tuvalTemizle(){anlikKaydet();ctx.clearRect(0,0,tuval.width,tuval.height);arkaCiz();sTik()}
+function tuvalKaydet(){
+  const ad=(document.getElementById('eserAdi').value||'sanat-eserim').trim();
+  const c=document.createElement('canvas');c.width=tuval.width;c.height=tuval.height+96;
+  const x=c.getContext('2d');
+  x.fillStyle='#FFF8EC';x.fillRect(0,0,c.width,c.height);
+  x.drawImage(tuval,0,0);
+  x.fillStyle='#33294B';x.font='900 42px system-ui,sans-serif';x.textAlign='center';
+  x.fillText(ad,c.width/2,tuval.height+56);
+  x.font='700 22px system-ui,sans-serif';x.fillStyle='#6C6288';
+  x.fillText('Sanat Ormanı\'nın Sırrı',c.width/2,tuval.height+84);
+  const a=document.createElement('a');a.download=ad.replace(/\s+/g,'_')+'.png';a.href=c.toDataURL('image/png');a.click();
+}
+
+/* ═══════ ÖĞRENME GÜNLÜĞÜ ═══════ */
+['gSekil','gRenk','gCizgi','gDoku','gGaleri','gEser'].forEach(id=>{
+  const el=document.getElementById(id);el.addEventListener('input',()=>el.dataset.elle='1')});
+function oto(id,deger){const el=document.getElementById(id);
+  if(!deger||el.dataset.elle==='1')return;el.value=deger}
+function gunlukGuncelle(){
+  oto('gCizgi',document.getElementById('sevdigimCizgi').value);
+  oto('gRenk',document.getElementById('sevdigimRenk').value);
+  oto('gEser',document.getElementById('eserAdi').value);
+  if(durum.eser)oto('gGaleri',durum.eser+(durum.duygu?' — '+durum.duygu.toLowerCase():''));
+  document.getElementById('belgeAd').textContent=document.getElementById('gAd').value.trim()||'…';
+}
+document.getElementById('gAd').addEventListener('input',gunlukGuncelle);
+function gunlukIndir(){
+  const v=id=>document.getElementById(id).value.trim()||'…………';
+  const metin=`ÖĞRENME GÜNLÜĞÜM — Sanat Ormanı'nın Sırrı
+Görsel Sanatlar · İlkokul 1. Sınıf
+
+Adım: ${v('gAd')}
+
+Öğrendiğim bir şekil        : ${v('gSekil')}
+En sevdiğim renk            : ${v('gRenk')}
+En sevdiğim çizgi           : ${v('gCizgi')}
+Dokunmayı sevdiğim yüzey    : ${v('gDoku')}
+Galeride seçtiğim eser      : ${v('gGaleri')}
+Sanat eserimin adı          : ${v('gEser')}
+Kazandığım anahtarlar       : ${v('gAnahtar')}
+
+Bugün sanat hakkında öğrendiğim bir şey:
+${v('gOgrendim')}
+
+Kazandığım yıldız: ${durum.yildiz.size} / 9
+"Sanat, bakmayı bilen herkesin içinde saklıdır." 🌈🎨`;
+  const b=new Blob([metin],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ogrenme_gunlugum.txt';a.click();
+}
+
+/* ─────────── BAŞLANGIÇ ─────────── */
+noktaGuncelle();cizgileriYenidenCiz();
+</script>
+</body>
+</html>

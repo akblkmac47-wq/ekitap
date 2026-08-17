@@ -1,0 +1,10 @@
+# ── GİZLİ: API anahtarı asla depoya gitmez ──
+.env
+.env.local
+*.key
+
+# sistem
+.DS_Store
+__pycache__/
+*.pyc
+.venv/

@@ -1,0 +1,470 @@
+<!-- ═══════════ ÜST ÇUBUK ═══════════ -->
+<div class="ustcubuk">
+  <div class="marka"><span class="nokta"></span> Sanat Ormanı'nın Sırrı</div>
+  <div class="bosluk"></div>
+  <div class="rozetYildiz" id="anahtarKutu">🔑 0/4 anahtar</div>
+  <div class="rozetYildiz" id="yildizKutu">⭐ 0/9</div>
+  <div class="sesCubuk">
+    <button class="btn ses" id="btnOynat" onclick="sesOynatDurdur()">▶︎ Dinle</button>
+    <div class="dalga" id="dalga"><span></span><span></span><span></span><span></span></div>
+    <div class="sesIlerle"><i id="sesIlerle"></i></div>
+  </div>
+  <button class="btn yesil" id="btnOto" onclick="otoDegis()">🎵 Oto: Açık</button>
+  <button class="btn hayalet" id="btnEfekt" onclick="efektDegis()">🔔</button>
+  <button class="btn hayalet" onclick="window.print()" title="Yazdır">🖨️</button>
+</div>
+
+<!-- ═══════════ KİTAP ═══════════ -->
+<div class="kitap" id="kitap">
+
+<!-- ══════════ 1 · KAPAK ══════════ -->
+<section class="sayfa kapak aktif" data-ses="Sanat Ormanı'nın Sırrı. Deniz ve sihirli fırçası Fırçacan ile renklerin peşine düş! Başlamak için ileri düğmesine bas.">
+ <div class="ic"><div class="kapakIc">
+  <div>
+    <span class="rozet">Görsel Sanatlar · İlkokul 1. Sınıf</span>
+    <div class="kapakBaslik"><span class="l1">SANAT ORMANI'NIN</span><span class="l2">SIRRI</span></div>
+    <div class="altBaslik">Deniz ve sihirli fırçası <b>Fırçacan</b> ile renklerin peşine düş! 🎨</div>
+    <div class="kunye">
+      <span class="pil">🔑 4 anahtar: çizgi · şekil · renk · doku</span>
+      <span class="pil">👦 6–7 yaş</span>
+      <span class="pil">📖 19 sayfa</span>
+      <span class="pil">🕹️ 9 etkinlik</span>
+      <span class="pil">🔊 Sesli anlatım</span>
+    </div>
+    <div class="satirBtn"><button class="btn ana" onclick="git(1)">▶ Maceraya Başla</button></div>
+  </div>
+  <div class="gorselKutu" data-img="01_kapak.png"><svg viewBox="0 0 400 340"><use href="#sh-kapak" width="400" height="340"/></svg></div>
+ </div></div><div class="sayfaNo">1</div>
+</section>
+
+<!-- ══════════ 2 · OKUL BAHÇESİ ══════════ -->
+<section class="sayfa" data-ses="Deniz, okul bahçesinde bir ağacın altında eski bir fırça buldu. Fırçanın sapı çizik çizikti, kılları ise hâlâ mavi duruyordu. Deniz fırçayı eline aldı. Tam o anda fırça gözlerini açtı ve konuştu! Merhaba, benim adım Fırçacan. Yıllardır beni bulacak bir sanatçı bekliyordum!">
+ <div class="ic">
+  <span class="rozet mavi">Giriş · Ağacın Altındaki Fırça</span>
+  <div class="ikili">
+   <div>
+    <h2>Konuşan Fırça</h2>
+    <div class="hikaye">
+      <p>Deniz, okul bahçesinde bir ağacın altında <span class="vurgu">eski bir fırça</span> buldu.</p>
+      <p>Sapı çizik çizikti, kılları ise hâlâ mavi duruyordu.</p>
+      <p>Deniz fırçayı eline aldı. Tam o anda fırça <b>gözlerini açtı</b> ve konuştu!</p>
+      <div class="konus mavi"><b>Fırçacan</b>“Merhaba! Benim adım Fırçacan. Yıllardır beni bulacak bir sanatçı bekliyordum!”</div>
+    </div>
+    <div class="yonerge">👂 <span>Hikâyeyi dinlemek için üstteki <b>▶︎ Dinle</b> düğmesine bas.</span></div>
+   </div>
+   <div class="gorselKutu" data-img="02_bahce.png"><svg viewBox="0 0 470 300"><use href="#sh-bahce" width="470" height="300"/></svg></div>
+  </div>
+ </div><div class="sayfaNo">2</div>
+</section>
+
+<!-- ══════════ 3 · SOLMUŞ ORMAN ══════════ -->
+<section class="sayfa" data-ses="Fırçacan havada bir kapı çizdi. Kapı açıldı ve Deniz Sanat Ormanı'na adım attı. Ama orman bembeyazdı. Ağaçlar gri, çiçekler soluktu. Fırçacan üzgün bir sesle anlattı: Ormanın renkleri kayboldu. Onları geri getirmek için dört sihirli anahtar gerek. Çizgi anahtarı, şekil anahtarı, renk anahtarı ve doku anahtarı. Deniz derin bir nefes aldı ve dedi ki: Ben varım!">
+ <div class="ic">
+  <span class="rozet mor">1. Bölüm · Renkleri Kaçmış Orman</span>
+  <div class="ikili ters">
+   <div class="gorselKutu" data-img="03_kapi.png"><svg viewBox="0 0 470 300"><use href="#sh-kapi" width="470" height="300"/></svg></div>
+   <div>
+    <h2>Renksiz Bir Dünya</h2>
+    <div class="hikaye">
+      <p>Fırçacan havada bir <span class="vurgu">kapı</span> çizdi. Kapı açıldı ve Deniz <b>Sanat Ormanı'na</b> adım attı.</p>
+      <p>Ama orman bembeyazdı. Ağaçlar gri, çiçekler soluktu.</p>
+      <div class="konus mavi"><b>Fırçacan</b>“Ormanın renkleri kayboldu. Onları geri getirmek için <b>dört sihirli anahtar</b> gerek: çizgi, şekil, renk ve doku!”</div>
+      <div class="konus"><b>Deniz</b>“Ben varım!”</div>
+    </div>
+    <div class="satirBtn"><button class="btn ana" onclick="git(3)">🗺️ Haritaya Bak</button></div>
+   </div>
+  </div>
+ </div><div class="sayfaNo">3</div>
+</section>
+
+<!-- ══════════ 4 · GÖREV HARİTASI ══════════ -->
+<section class="sayfa" data-ses="İşte Sanat Ormanı'nın haritası. Dört durak var: Çizgi Nehri, Şekil Kayalıkları, Renk Şelalesi ve Doku Mağarası. Her durakta bir bekçi ve bir görev seni bekliyor. Görevi tamamlayınca o durağın anahtarını kazanacaksın. Hazırsan yola çıkalım!">
+ <div class="ic">
+  <span class="rozet sari">Görev Haritası 🗺️</span>
+  <h2>Dört Durak, Dört Anahtar</h2>
+  <div class="harita">
+   <svg class="haritaSvg" viewBox="0 0 900 420" preserveAspectRatio="none">
+     <path id="yol" d="M118 322 C 170 220, 240 130, 320 122 C 400 114, 430 260, 522 300 C 610 338, 660 190, 760 150" fill="none"
+           stroke="#B8A6E8" stroke-width="15" stroke-linecap="round" stroke-dasharray="26 20"/>
+   </svg>
+   <div class="durakKart" id="d1" style="left:13%;top:77%"><span class="sira">1</span><svg viewBox="0 0 260 160"><use href="#kivrim" width="260" height="160"/></svg><div class="ad">Çizgi Nehri</div><div class="alt">Bekçi: Kıvrım</div></div>
+   <div class="durakKart" id="d2" style="left:36%;top:29%"><span class="sira">2</span><svg viewBox="0 0 200 220"><use href="#kose" width="200" height="220"/></svg><div class="ad">Şekil Kayalıkları</div><div class="alt">Bekçi: Köşe</div></div>
+   <div class="durakKart" id="d3" style="left:58%;top:72%"><span class="sira">3</span><svg viewBox="0 0 240 200"><use href="#ebru" width="240" height="200"/></svg><div class="ad">Renk Şelalesi</div><div class="alt">Bekçi: Ebru</div></div>
+   <div class="durakKart" id="d4" style="left:84%;top:36%"><span class="sira">4</span><svg viewBox="0 0 240 170"><use href="#putur" width="240" height="170"/></svg><div class="ad">Doku Mağarası</div><div class="alt">Bekçi: Pütür</div></div>
+  </div>
+  <div class="satirBtn"><button class="btn ana" onclick="git(4)">🌊 1. Durak: Çizgi Nehri</button></div>
+ </div><div class="sayfaNo">4</div>
+</section>
+
+<!-- ══════════ 5 · ÇİZGİ NEHRİ ══════════ -->
+<section class="sayfa" data-ses="Deniz, Çizgi Nehri'ne geldi. Suyun üstünde upuzun bir yılan süzülüyordu. Adı Kıvrım'dı. Kıvrım dedi ki: Ben çizgilerin bekçisiyim. Dünyadaki her şey bir çizgiyle başlar. Bak: düz çizgi sakin durur, dalgalı çizgi su gibi akar, zikzak çizgi şimşek gibi çakar, kıvrımlı çizgi yılan gibi kıvrılır. Çizgileri tanırsan anahtar senindir!">
+ <div class="ic">
+  <span class="rozet mavi">1. Durak · Çizgi Nehri 🌊</span>
+  <div class="ikili">
+   <div>
+    <h2>Kıvrım'ın Dört Çizgisi</h2>
+    <div class="hikaye">
+      <p>Suyun üstünde upuzun bir yılan süzülüyordu. Adı <span class="vurgu">Kıvrım</span>'dı.</p>
+      <div class="konus mavi"><b>Kıvrım</b>“Ben çizgilerin bekçisiyim. Dünyadaki her şey bir çizgiyle başlar!”</div>
+      <p><b>Düz</b> çizgi sakin durur · <b>Dalgalı</b> çizgi su gibi akar · <b>Zikzak</b> çizgi şimşek gibi çakar · <b>Kıvrımlı</b> çizgi yılan gibi kıvrılır.</p>
+    </div>
+    <div class="izgara i2" style="gap:8px">
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 200 70" style="height:44px"><use href="#cz-duz" width="200" height="70"/></svg><span class="etiket">DÜZ</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 200 70" style="height:44px"><use href="#cz-dalgali" width="200" height="70"/></svg><span class="etiket">DALGALI</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 200 70" style="height:44px"><use href="#cz-zikzak" width="200" height="70"/></svg><span class="etiket">ZİKZAK</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 200 70" style="height:44px"><use href="#cz-kivrimli" width="200" height="70"/></svg><span class="etiket">KIVRIMLI</span></div>
+    </div>
+   </div>
+   <div class="gorselKutu" data-img="05_nehir.png"><svg viewBox="0 0 470 300"><use href="#sh-nehir" width="470" height="300"/></svg></div>
+  </div>
+ </div><div class="sayfaNo">5</div>
+</section>
+
+<!-- ══════════ 6 · ETKİNLİK 1 ══════════ -->
+<section class="sayfa" data-ses="Birinci görev. Kıvrım soruyor: Hangisi doğru çizgi? Her soruda doğru çizgiye dokun.">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 1 · Hangisi Doğru Çizgi?</span>
+  <h2>Kıvrım'ın soruları</h2>
+  <div id="e1" style="display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center"></div>
+  <div class="geribildirim" id="e1geri"></div>
+ </div><div class="sayfaNo">6</div>
+</section>
+
+<!-- ══════════ 7 · ETKİNLİK 2 ══════════ -->
+<section class="sayfa" data-ses="İkinci görev. Çizgileri doğaya benzet! Önce bir resme dokun, sonra ona benzeyen çizgiye dokun. Hepsini doğru eşleştirirsen çizgi anahtarını kazanırsın.">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 2 · Çizgiyi Doğada Bul</span>
+  <h2>Resmi doğru çizgiyle eşleştir</h2>
+  <div class="izgara i5 dol">
+   <div class="kart es-kaynak" data-cift="duz"      onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#n-trenyolu" width="100" height="100"/></svg><span class="etiket">🚂 Tren Yolu</span></div>
+   <div class="kart es-kaynak" data-cift="dalgali"  onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#n-deniz" width="100" height="100"/></svg><span class="etiket">🌊 Deniz</span></div>
+   <div class="kart es-kaynak" data-cift="zikzak"   onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#n-yildirim" width="100" height="100"/></svg><span class="etiket">⚡ Yıldırım</span></div>
+   <div class="kart es-kaynak" data-cift="kivrimli" onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#n-yilan" width="100" height="100"/></svg><span class="etiket">🐍 Yılan</span></div>
+   <div class="kart es-kaynak" data-cift="kesik"    onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#n-merdiven" width="100" height="100"/></svg><span class="etiket">🪜 Merdiven</span></div>
+  </div>
+  <div class="izgara i5">
+   <div class="hedef es-hedef" data-cift="duz"      onclick="esBirak(this)"><svg viewBox="0 0 200 70" style="width:100%;height:38px"><use href="#cz-duz" width="200" height="70"/></svg>DÜZ</div>
+   <div class="hedef es-hedef" data-cift="dalgali"  onclick="esBirak(this)"><svg viewBox="0 0 200 70" style="width:100%;height:38px"><use href="#cz-dalgali" width="200" height="70"/></svg>DALGALI</div>
+   <div class="hedef es-hedef" data-cift="zikzak"   onclick="esBirak(this)"><svg viewBox="0 0 200 70" style="width:100%;height:38px"><use href="#cz-zikzak" width="200" height="70"/></svg>ZİKZAK</div>
+   <div class="hedef es-hedef" data-cift="kivrimli" onclick="esBirak(this)"><svg viewBox="0 0 200 70" style="width:100%;height:38px"><use href="#cz-kivrimli" width="200" height="70"/></svg>KIVRIMLI</div>
+   <div class="hedef es-hedef" data-cift="kesik"    onclick="esBirak(this)"><svg viewBox="0 0 200 70" style="width:100%;height:38px"><use href="#cz-kesik" width="200" height="70"/></svg>KESİK</div>
+  </div>
+  <div class="geribildirim" id="e2geri"></div>
+  <div class="yonerge">💙 <span>Sen en çok hangi çizgiyi sevdin?
+    <select id="sevdigimCizgi" onchange="gunlukGuncelle()"><option value="">Seç…</option><option>Düz çizgi</option><option>Dalgalı çizgi</option><option>Zikzak çizgi</option><option>Kıvrımlı çizgi</option><option>Kesik çizgi</option></select></span></div>
+ </div><div class="sayfaNo">7</div>
+</section>
+
+<!-- ══════════ 8 · ŞEKİL KAYALIKLARI ══════════ -->
+<section class="sayfa" data-ses="Çizgi anahtarı cebinde, Deniz yoluna devam etti. Karşısına kocaman kayalar çıktı. Kayaların üstünde geometrik bir baykuş oturuyordu. Adı Köşe'ydi. Köşe dedi ki: Benim dünyamda her şeyin bir şekli var. Daire yuvarlanır, kare dört eşit kenarlıdır, üçgenin üç köşesi vardır, dikdörtgen uzun ve düzdür. Etrafına iyi bak, şekiller her yerde saklanıyor!">
+ <div class="ic">
+  <span class="rozet mor">2. Durak · Şekil Kayalıkları 🪨</span>
+  <div class="ikili ters">
+   <div class="gorselKutu" data-img="08_kayalik.png"><svg viewBox="0 0 470 300"><use href="#sh-kayalik" width="470" height="300"/></svg></div>
+   <div>
+    <h2>Köşe'nin Kayalıkları</h2>
+    <div class="hikaye">
+      <p>Kayaların üstünde geometrik bir baykuş oturuyordu. Adı <span class="vurgu">Köşe</span>'ydi.</p>
+      <div class="konus mor"><b>Köşe</b>“Benim dünyamda her şeyin bir <b>şekli</b> var. Etrafına iyi bak — şekiller her yerde saklanıyor!”</div>
+    </div>
+    <div class="izgara i4" style="gap:8px">
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100"><use href="#sk-daire" width="100" height="100"/></svg><span class="etiket">DAİRE</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100"><use href="#sk-kare" width="100" height="100"/></svg><span class="etiket">KARE</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100"><use href="#sk-ucgen" width="100" height="100"/></svg><span class="etiket">ÜÇGEN</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100"><use href="#sk-dikdortgen" width="100" height="100"/></svg><span class="etiket">DİKDÖRTGEN</span></div>
+    </div>
+   </div>
+  </div>
+ </div><div class="sayfaNo">8</div>
+</section>
+
+<!-- ══════════ 9 · ETKİNLİK 3 ══════════ -->
+<section class="sayfa" data-ses="Üçüncü görev. Nesneleri şekilleriyle eşleştir. Önce bir nesneye dokun, sonra onun şekline dokun.">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 3 · Nesneyi Şekliyle Eşleştir</span>
+  <h2>Hangi nesne hangi şekle benziyor?</h2>
+  <div class="izgara i4 dol">
+   <div class="kart es-kaynak" data-cift="daire" onclick="esSec(this)"><span class="emoji">🏀</span><span class="etiket">Top</span></div>
+   <div class="kart es-kaynak" data-cift="ucgen" onclick="esSec(this)"><span class="emoji">🍕</span><span class="etiket">Pizza Dilimi</span></div>
+   <div class="kart es-kaynak" data-cift="dikdortgen" onclick="esSec(this)"><span class="emoji">🚪</span><span class="etiket">Kapı</span></div>
+   <div class="kart es-kaynak" data-cift="kare" onclick="esSec(this)"><span class="emoji">🪟</span><span class="etiket">Pencere</span></div>
+  </div>
+  <div class="izgara i4">
+   <div class="hedef es-hedef" data-cift="daire" onclick="esBirak(this)"><svg viewBox="0 0 100 100" style="width:50px;height:46px"><use href="#sk-daire" width="100" height="100"/></svg>DAİRE</div>
+   <div class="hedef es-hedef" data-cift="ucgen" onclick="esBirak(this)"><svg viewBox="0 0 100 100" style="width:50px;height:46px"><use href="#sk-ucgen" width="100" height="100"/></svg>ÜÇGEN</div>
+   <div class="hedef es-hedef" data-cift="dikdortgen" onclick="esBirak(this)"><svg viewBox="0 0 100 100" style="width:50px;height:46px"><use href="#sk-dikdortgen" width="100" height="100"/></svg>DİKDÖRTGEN</div>
+   <div class="hedef es-hedef" data-cift="kare" onclick="esBirak(this)"><svg viewBox="0 0 100 100" style="width:50px;height:46px"><use href="#sk-kare" width="100" height="100"/></svg>KARE</div>
+  </div>
+  <div class="geribildirim" id="e3geri"></div>
+ </div><div class="sayfaNo">9</div>
+</section>
+
+<!-- ══════════ 10 · ETKİNLİK 4 ══════════ -->
+<section class="sayfa" data-ses="Dördüncü görev. Köşe bir resim çizdi. Şimdi say bakalım: bu resimde kaç tane var? Doğru sayıya dokun. Hepsini bilirsen şekil anahtarı senin!">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 4 · Şekilleri Say</span>
+  <h2>Köşe'nin resminde kaç tane var?</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;align-items:center">
+    <div class="gorselKutu" style="min-height:170px">
+      <svg viewBox="0 0 400 260" id="sayResim">
+        <rect width="400" height="260" rx="14" fill="#FFF8EC"/>
+        <g stroke="#3A2C22" stroke-width="4" stroke-linejoin="round">
+          <path d="M60 150l40-70 40 70z" fill="#FF5A4E"/>
+          <path d="M160 150l34-60 34 60z" fill="#FF9A3C"/>
+          <path d="M254 150l30-54 30 54z" fill="#FFB300"/>
+          <rect x="52" y="164" width="58" height="58" fill="#22D3A5"/>
+          <rect x="130" y="164" width="58" height="58" fill="#12B98C"/>
+          <circle cx="250" cy="196" r="30" fill="#3FA9F5"/>
+          <circle cx="330" cy="196" r="30" fill="#A66BFF"/>
+          <circle cx="330" cy="84" r="26" fill="#FFD34E"/>
+          <rect x="200" y="176" width="34" height="46" fill="#FF8FC7"/>
+        </g>
+      </svg>
+    </div>
+    <div id="e4" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+  <div class="geribildirim" id="e4geri"></div>
+ </div><div class="sayfaNo">10</div>
+</section>
+
+<!-- ══════════ 11 · RENK ŞELALESİ ══════════ -->
+<section class="sayfa" data-ses="Şekil anahtarı da cebinde! Deniz ilerledi ve üç renkli bir şelaleye ulaştı. Kırmızı, sarı ve mavi sular aşağı akıyordu. Şelalenin üstünde rengârenk bir kelebek uçuyordu. Adı Ebru'ydu. Ebru dedi ki: Kırmızı, sarı ve mavi ana renklerdir. Onları karıştırırsan yeni renkler doğar. Kırmızı ve sarı turuncuyu, sarı ve mavi yeşili, kırmızı ve mavi moru yapar. Bak, sular birleşince ne oluyor!">
+ <div class="ic">
+  <span class="rozet pembe">3. Durak · Renk Şelalesi 🌈</span>
+  <div class="ikili">
+   <div>
+    <h2>Ebru'nun Renk Sırrı</h2>
+    <div class="hikaye">
+      <p>Kırmızı, sarı ve mavi sular aşağı akıyordu. Üstünde rengârenk bir kelebek uçuyordu: <span class="vurgu">Ebru</span>.</p>
+      <div class="konus mor"><b>Ebru</b>“Kırmızı, sarı ve mavi <b>ana renklerdir</b>. Onları karıştırırsan yeni renkler doğar!”</div>
+    </div>
+    <div class="izgara i3" style="gap:8px">
+      <div class="kart" style="cursor:default"><span class="emoji">🔴+🟡</span><span class="etiket" style="color:#E07B00">TURUNCU</span></div>
+      <div class="kart" style="cursor:default"><span class="emoji">🟡+🔵</span><span class="etiket" style="color:#0A8F6E">YEŞİL</span></div>
+      <div class="kart" style="cursor:default"><span class="emoji">🔴+🔵</span><span class="etiket" style="color:#7B41C4">MOR</span></div>
+    </div>
+   </div>
+   <div class="gorselKutu" data-img="11_selale.png"><svg viewBox="0 0 470 300"><use href="#sh-selale" width="470" height="300"/></svg></div>
+  </div>
+ </div><div class="sayfaNo">11</div>
+</section>
+
+<!-- ══════════ 12 · ETKİNLİK 5 ══════════ -->
+<section class="sayfa" data-ses="Beşinci görev. Sence hangi renk oluşur? İki rengi birleştirince ortaya çıkan rengi seç.">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 5 · Renkler Karışınca</span>
+  <h2>Sence hangi renk oluşur? 🎨</h2>
+  <div id="e5" style="display:flex;flex-direction:column;gap:11px;flex:1;justify-content:center"></div>
+  <div class="geribildirim" id="e5geri"></div>
+ </div><div class="sayfaNo">12</div>
+</section>
+
+<!-- ══════════ 13 · ETKİNLİK 6 ══════════ -->
+<section class="sayfa" data-ses="Altıncı görev. Ebru soruyor: Hangi renkler sıcak, hangileri soğuk? Sıcak renkler güneşi ve ateşi hatırlatır. Soğuk renkler suyu ve gökyüzünü hatırlatır. Önce bir renge dokun, sonra doğru kutuya dokun. Hepsini yerleştirirsen renk anahtarı senin!">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 6 · Sıcak mı, Soğuk mu?</span>
+  <h2>Renkleri doğru kutuya yerleştir</h2>
+  <div class="izgara i3 dol" id="e6renkler">
+   <div class="kart ss-renk" data-grup="sicak" onclick="ssSec(this)"><span class="emoji" style="color:#FF3B3B">🟥</span><span class="etiket">Kırmızı</span></div>
+   <div class="kart ss-renk" data-grup="sicak" onclick="ssSec(this)"><span class="emoji">🟧</span><span class="etiket">Turuncu</span></div>
+   <div class="kart ss-renk" data-grup="sicak" onclick="ssSec(this)"><span class="emoji">🟨</span><span class="etiket">Sarı</span></div>
+   <div class="kart ss-renk" data-grup="soguk" onclick="ssSec(this)"><span class="emoji">🟦</span><span class="etiket">Mavi</span></div>
+   <div class="kart ss-renk" data-grup="soguk" onclick="ssSec(this)"><span class="emoji">🟩</span><span class="etiket">Yeşil</span></div>
+   <div class="kart ss-renk" data-grup="soguk" onclick="ssSec(this)"><span class="emoji">🟪</span><span class="etiket">Mor</span></div>
+  </div>
+  <div class="izgara i2" style="margin-top:8px">
+   <div class="hedef ss-kutu" data-grup="sicak" onclick="ssBirak(this)" style="min-height:104px;border-color:#FFB199;background:#FFF3EE">
+     <div style="font-size:26px">🔥</div><div>SICAK RENKLER</div><div class="ss-icerik" style="display:flex;gap:6px;font-size:26px"></div></div>
+   <div class="hedef ss-kutu" data-grup="soguk" onclick="ssBirak(this)" style="min-height:104px;border-color:#9CD2F5;background:#EEF7FF">
+     <div style="font-size:26px">❄️</div><div>SOĞUK RENKLER</div><div class="ss-icerik" style="display:flex;gap:6px;font-size:26px"></div></div>
+  </div>
+  <div class="geribildirim" id="e6geri"></div>
+  <div class="yonerge">💜 <span>En sevdiğin renk hangisi?
+    <select id="sevdigimRenk" onchange="gunlukGuncelle()"><option value="">Seç…</option><option>Kırmızı</option><option>Turuncu</option><option>Sarı</option><option>Yeşil</option><option>Mavi</option><option>Mor</option><option>Pembe</option></select></span></div>
+ </div><div class="sayfaNo">13</div>
+</section>
+
+<!-- ══════════ 14 · DOKU MAĞARASI ══════════ -->
+<section class="sayfa" data-ses="Renk anahtarı da tamam! Son durak: Doku Mağarası. İçerisi karanlıktı ama duvarlar ışıldıyordu. Köşeden minik bir kirpi çıktı. Adı Pütür'dü. Pütür dedi ki: Gözlerini kapat ve elinle dokun. Taş pürüzlüdür, sünger yumuşaktır, cam düzdür, yaprağın damarları vardır, kumaş ise ipek gibidir. İşte buna doku denir!">
+ <div class="ic">
+  <span class="rozet">4. Durak · Doku Mağarası 🖐️</span>
+  <div class="ikili ters">
+   <div class="gorselKutu" data-img="14_magara.png"><svg viewBox="0 0 470 300"><use href="#sh-magara" width="470" height="300"/></svg></div>
+   <div>
+    <h2>Pütür'ün Mağarası</h2>
+    <div class="hikaye">
+      <p>Köşeden minik bir kirpi çıktı. Adı <span class="vurgu">Pütür</span>'dü.</p>
+      <div class="konus yesil"><b>Pütür</b>“Gözlerini kapat ve elinle dokun. İşte buna <b>doku</b> denir!”</div>
+      <p>Taş <b>pürüzlü</b> · Sünger <b>yumuşak</b> · Cam <b>düz</b> · Yaprak <b>damarlı</b> · Kumaş <b>ipek gibi</b></p>
+    </div>
+    <div class="izgara i5" style="gap:7px">
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100" style="height:52px"><use href="#dk-tas" width="100" height="100"/></svg><span class="etiket" style="font-size:11px">Taş</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100" style="height:52px"><use href="#dk-sunger" width="100" height="100"/></svg><span class="etiket" style="font-size:11px">Sünger</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100" style="height:52px"><use href="#dk-cam" width="100" height="100"/></svg><span class="etiket" style="font-size:11px">Cam</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100" style="height:52px"><use href="#dk-yaprak" width="100" height="100"/></svg><span class="etiket" style="font-size:11px">Yaprak</span></div>
+      <div class="kart" style="cursor:default"><svg viewBox="0 0 100 100" style="height:52px"><use href="#dk-kumas" width="100" height="100"/></svg><span class="etiket" style="font-size:11px">Kumaş</span></div>
+    </div>
+   </div>
+  </div>
+ </div><div class="sayfaNo">14</div>
+</section>
+
+<!-- ══════════ 15 · ETKİNLİK 7 ══════════ -->
+<section class="sayfa" data-ses="Yedinci görev. Dokuları eşleştir! Önce bir nesneye dokun, sonra onun dokusuna dokun. Hepsini bilirsen doku anahtarı senin olacak ve dört anahtar tamamlanacak!">
+ <div class="ic">
+  <span class="rozet yesil">Etkinlik 7 · Dokuları Eşleştir</span>
+  <h2>Bu nesne nasıl hissettirir?</h2>
+  <div class="izgara i5 dol">
+   <div class="kart es-kaynak" data-cift="puruzlu" onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#dk-tas" width="100" height="100"/></svg><span class="etiket">Taş</span></div>
+   <div class="kart es-kaynak" data-cift="yumusak" onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#dk-sunger" width="100" height="100"/></svg><span class="etiket">Sünger</span></div>
+   <div class="kart es-kaynak" data-cift="duzz"    onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#dk-cam" width="100" height="100"/></svg><span class="etiket">Cam</span></div>
+   <div class="kart es-kaynak" data-cift="damarli" onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#dk-yaprak" width="100" height="100"/></svg><span class="etiket">Yaprak</span></div>
+   <div class="kart es-kaynak" data-cift="ipeksi"  onclick="esSec(this)"><svg viewBox="0 0 100 100"><use href="#dk-kumas" width="100" height="100"/></svg><span class="etiket">Kumaş</span></div>
+  </div>
+  <div class="izgara i5">
+   <div class="hedef es-hedef" data-cift="puruzlu" onclick="esBirak(this)"><span style="font-size:28px">🪨</span>PÜRÜZLÜ</div>
+   <div class="hedef es-hedef" data-cift="yumusak" onclick="esBirak(this)"><span style="font-size:28px">☁️</span>YUMUŞAK</div>
+   <div class="hedef es-hedef" data-cift="duzz"    onclick="esBirak(this)"><span style="font-size:28px">🪞</span>DÜZ</div>
+   <div class="hedef es-hedef" data-cift="damarli" onclick="esBirak(this)"><span style="font-size:28px">🍃</span>DAMARLI</div>
+   <div class="hedef es-hedef" data-cift="ipeksi"  onclick="esBirak(this)"><span style="font-size:28px">🧣</span>İPEKSİ</div>
+  </div>
+  <div class="geribildirim" id="e7geri"></div>
+ </div><div class="sayfaNo">15</div>
+</section>
+
+<!-- ══════════ 16 · ORMAN GALERİSİ ══════════ -->
+<section class="sayfa" data-ses="Dört anahtar da tamam! Anahtarlar birleşince ormanın ortasında bir galeri belirdi. Duvarlarda dört tablo asılıydı. Fırçacan sordu: Bir tabloyu seç ve bana söyle, bu resim sana ne hissettiriyor? Çünkü sanat sadece göz için değil, kalp içindir.">
+ <div class="ic">
+  <span class="rozet mavi">5. Bölüm · Orman Galerisi 🖼️</span>
+  <p class="hikaye" style="margin-bottom:6px">Anahtarlar birleşince ormanın ortasında bir <b>galeri</b> belirdi. <b>“Bir tabloyu seç — bu resim sana ne hissettiriyor?”</b></p>
+  <div class="izgara i4 dol" id="e8">
+   <div class="kart" data-eser="Neşeli Renkler" onclick="e8Sec(this)"><svg viewBox="0 0 160 200" style="height:104px"><use href="#tb-nese" width="160" height="200"/></svg><span class="etiket">1 · Neşeli Renkler</span></div>
+   <div class="kart" data-eser="Sakin Deniz" onclick="e8Sec(this)"><svg viewBox="0 0 160 200" style="height:104px"><use href="#tb-sakin" width="160" height="200"/></svg><span class="etiket">2 · Sakin Deniz</span></div>
+   <div class="kart" data-eser="Hareketli Çizgiler" onclick="e8Sec(this)"><svg viewBox="0 0 160 200" style="height:104px"><use href="#tb-enerjik" width="160" height="200"/></svg><span class="etiket">3 · Hareketli Çizgiler</span></div>
+   <div class="kart" data-eser="Dokulu Toprak" onclick="e8Sec(this)"><svg viewBox="0 0 160 200" style="height:104px"><use href="#tb-dokulu" width="160" height="200"/></svg><span class="etiket">4 · Dokulu Toprak</span></div>
+  </div>
+  <div class="yonerge">🤔 <span id="e8soru">Önce bir tablo seç.</span></div>
+  <div class="izgara i5" id="e8duygu" style="opacity:.4;pointer-events:none">
+   <div class="kart" onclick="e8Duygu(this,'Mutlu')"><span class="emoji">😊</span><span class="etiket">Mutlu</span></div>
+   <div class="kart" onclick="e8Duygu(this,'Sakin')"><span class="emoji">😌</span><span class="etiket">Sakin</span></div>
+   <div class="kart" onclick="e8Duygu(this,'Şaşkın')"><span class="emoji">😮</span><span class="etiket">Şaşkın</span></div>
+   <div class="kart" onclick="e8Duygu(this,'Heyecanlı')"><span class="emoji">🤩</span><span class="etiket">Heyecanlı</span></div>
+   <div class="kart" onclick="e8Duygu(this,'Meraklı')"><span class="emoji">🧐</span><span class="etiket">Meraklı</span></div>
+  </div>
+  <div class="geribildirim" id="e8geri"></div>
+ </div><div class="sayfaNo">16</div>
+</section>
+
+<!-- ══════════ 17 · FİNAL: ORMANI BOYA ══════════ -->
+<section class="sayfa" data-ses="Son görev! Fırçacan dedi ki: Artık her şeyi biliyorsun. Çizgiyi, şekli, rengi ve dokuyu. Şimdi ormanı sen boya! İstediğin çizgiyi çiz, istediğin şekli bas, istediğin rengi seç. Bittiğinde eserine bir isim ver. Çünkü her sanatçının eserinin bir adı olur.">
+ <div class="ic">
+  <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+    <div style="flex:1;min-width:210px">
+      <span class="rozet sari">Büyük Final · Ormanı Sen Boya 🎨</span>
+      <h2 style="margin-bottom:2px">Şimdi sıra sende!</h2>
+      <p style="margin:0"><b>Çizgi + Şekil + Renk + Doku</b> kullan ve Sanat Ormanı'nı renklendir.</p>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+      <input id="eserAdi" placeholder="Eserimin adı…" oninput="gunlukGuncelle()" style="font-family:inherit;font-weight:900;font-size:15px;padding:8px 12px;border-radius:13px;border:3px solid #EFE8FB;width:180px">
+      <button class="btn yesil" onclick="tuvalKaydet()">💾 İndir</button>
+      <button class="btn hayalet" style="color:#33294B;background:#fff" onclick="tuvalGeriAl()">↩︎ Geri</button>
+      <button class="btn hayalet" style="color:#33294B;background:#fff" onclick="tuvalTemizle()">🧽 Temizle</button>
+    </div>
+  </div>
+  <div class="tuvalSarma" style="margin-top:9px">
+    <div class="aletler">
+      <div><h3 style="font-size:12.5px;margin-bottom:3px">🎨 RENK</h3><div class="renkler" id="paletKutu"></div></div>
+      <div><h3 style="font-size:12.5px;margin-bottom:3px">🖌️ FIRÇA</h3>
+        <div class="firca">
+          <button class="fircaBtn" onclick="fircaSec(this,6)">İnce</button>
+          <button class="fircaBtn secili" onclick="fircaSec(this,15)">Orta</button>
+          <button class="fircaBtn" onclick="fircaSec(this,32)">Kalın</button>
+        </div></div>
+      <div><h3 style="font-size:12.5px;margin-bottom:3px">⬛ ŞEKİL DAMGASI</h3>
+        <div class="firca">
+          <button class="fircaBtn secili" onclick="damgaSec(this,'')" title="Serbest çizim">✏️</button>
+          <button class="fircaBtn" onclick="damgaSec(this,'daire')">⬤</button>
+          <button class="fircaBtn" onclick="damgaSec(this,'kare')">■</button>
+          <button class="fircaBtn" onclick="damgaSec(this,'ucgen')">▲</button>
+          <button class="fircaBtn" onclick="damgaSec(this,'yildiz')">★</button>
+        </div></div>
+      <div><h3 style="font-size:12.5px;margin-bottom:3px">🖐️ DOKU FIRÇASI</h3>
+        <div class="firca">
+          <button class="fircaBtn" onclick="dokuSec(this,'puruzlu')">Pürüzlü</button>
+          <button class="fircaBtn" onclick="dokuSec(this,'noktali')">Noktalı</button>
+          <button class="fircaBtn secili" onclick="dokuSec(this,'')">Düz</button>
+        </div></div>
+      <div style="background:#FFF3D3;border:2px dashed #F2C14E;border-radius:13px;padding:7px;font-size:11.5px;font-weight:800;line-height:1.4">
+        Fırçacan: “Bir <b>dalgalı</b> çizgi çiz, içine bir <b>şekil</b> bas, <b>sıcak</b> ve <b>soğuk</b> bir rengi yan yana koy!”
+      </div>
+    </div>
+    <canvas id="tuval" width="1020" height="640"></canvas>
+  </div>
+ </div><div class="sayfaNo">17</div>
+</section>
+
+<!-- ══════════ 18 · ÖĞRENME GÜNLÜĞÜ ══════════ -->
+<section class="sayfa" data-ses="Öğrenme günlüğü zamanı. Bugün öğrendiklerini buraya yaz. Adını, öğrendiğin bir şekli, en sevdiğin rengi, en sevdiğin çizgiyi, dokunmayı sevdiğin bir yüzeyi ve eserinin adını yaz. Sonra günlüğünü indirebilirsin.">
+ <div class="ic">
+  <span class="rozet mor">⭐ Öğrenme Günlüğüm</span>
+  <h2>Bugün Neler Öğrendim?</h2>
+  <p>Boşlukları doldur. Bazıları önceki sayfalardaki seçimlerinden <b>kendiliğinden</b> gelir. ✨</p>
+  <div class="gunluk" style="margin-top:4px">
+    <div class="alan"><label>👤 Adım</label><input id="gAd" placeholder="Adını yaz…"></div>
+    <div class="alan"><label>🔺 Öğrendiğim bir şekil</label><input id="gSekil" placeholder="Örn: üçgen"></div>
+    <div class="alan"><label>🎨 En sevdiğim renk</label><input id="gRenk" placeholder="Örn: mor"></div>
+    <div class="alan"><label>✏️ En sevdiğim çizgi</label><input id="gCizgi" placeholder="Örn: dalgalı çizgi"></div>
+    <div class="alan"><label>🖐️ Dokunmayı sevdiğim yüzey</label><input id="gDoku" placeholder="Örn: yumuşak sünger"></div>
+    <div class="alan"><label>🖼️ Galeride seçtiğim eser ve hissim</label><input id="gGaleri" placeholder="Örn: Sakin Deniz — sakin"></div>
+    <div class="alan"><label>🏷️ Sanat eserimin adı</label><input id="gEser" placeholder="Örn: Renkli Orman"></div>
+    <div class="alan"><label>🔑 Kazandığım anahtarlar</label><input id="gAnahtar" readonly value="0 / 4"></div>
+    <div class="alan" style="grid-column:1/-1"><label>💡 Bugün sanat hakkında öğrendiğim bir şey</label><textarea id="gOgrendim" rows="2" placeholder="Örn: Renkler karışınca yeni renkler oluşuyor."></textarea></div>
+  </div>
+  <div class="satirBtn">
+    <button class="btn ana" onclick="gunlukIndir()">📥 Günlüğümü İndir</button>
+    <button class="btn sari" onclick="git(18)">🏁 Finale Git</button>
+  </div>
+ </div><div class="sayfaNo">18</div>
+</section>
+
+<!-- ══════════ 19 · KAPANIŞ ══════════ -->
+<section class="sayfa" data-ses="Deniz son fırça darbesini vurdu. Ve birden orman renklerine kavuştu! Ağaçlar yeşerdi, çiçekler açtı, gökyüzüne kocaman bir gökkuşağı yayıldı. Fırçacan gülümsedi ve dedi ki: Ormanı sen kurtardın. Çünkü sanat, bakmayı bilen herkesin içinde saklıdır. Sen de çevrene bak: çizgileri, şekilleri, renkleri ve dokuları bul. Sanat her yerde!">
+ <div class="ic">
+  <span class="rozet">Kapanış · Sanat Her Yerde 🌈</span>
+  <div class="ikili">
+   <div>
+    <div class="hikaye">
+      <p>Deniz son fırça darbesini vurdu. Ve birden <span class="vurgu">orman renklerine kavuştu!</span></p>
+      <p>Ağaçlar yeşerdi, çiçekler açtı, gökyüzüne kocaman bir gökkuşağı yayıldı.</p>
+      <div class="konus mavi"><b>Fırçacan</b>“Ormanı sen kurtardın. Çünkü <b>sanat, bakmayı bilen herkesin içinde saklıdır.</b>”</div>
+    </div>
+    <div class="sertifika" style="margin-top:4px">
+      <div class="madalya">🏅</div>
+      <div style="font-size:12px;font-weight:900;letter-spacing:2px;color:#8A6100">SANAT ORMANI KAHRAMANI</div>
+      <div id="belgeAd" style="font-size:25px;font-weight:900;margin:3px 0;color:#1B6CA8">…</div>
+      <div style="font-size:13.5px;font-weight:800">çizgiyi, şekli, rengi ve dokuyu keşfetti<br>ve Sanat Ormanı'nı yeniden renklendirdi.</div>
+      <div id="belgeYildiz" style="font-size:20px;margin-top:5px"></div>
+    </div>
+   </div>
+   <div style="display:flex;flex-direction:column;gap:9px;min-height:0">
+    <div class="gorselKutu" data-img="19_final.png" style="min-height:0;flex:1"><svg viewBox="0 0 470 300"><use href="#sh-final" width="470" height="300"/></svg></div>
+    <div style="background:#F6EFFF;border:3px dashed #C9AEF5;border-radius:16px;padding:9px 13px;font-size:12px;font-weight:700;line-height:1.5">
+      <b>👩‍🏫 Öğretmen Notu:</b> Akış <b>fark etme → inceleme → seçim yapma → üretme → paylaşma</b> sırasını izler.
+      4 durak = 4 öğrenme alanı (çizgi, şekil, renk, doku), 9 etkinlik, 1 özgün ürün ve 1 öğrenme günlüğü içerir.
+    </div>
+    <div class="satirBtn">
+      <button class="btn ana" onclick="git(0)">🔁 Baştan Oku</button>
+      <button class="btn yesil" onclick="window.print()">🖨️ Yazdır</button>
+    </div>
+   </div>
+  </div>
+ </div><div class="sayfaNo">19</div>
+</section>
+
+</div><!-- /kitap -->
+
+<div class="navi">
+  <button class="btn hayalet" onclick="onceki()">◀ Geri</button>
+  <div class="noktalar" id="noktalar"></div>
+  <button class="btn ana" onclick="sonraki()">İleri ▶</button>
+</div>

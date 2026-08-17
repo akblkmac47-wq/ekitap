@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎙 Gemini Üretici — Sanat Ormanı'nın Sırrı</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:26px 18px 60px;font-family:'Nunito',system-ui,-apple-system,sans-serif;
+  color:#EDE7FA;background:linear-gradient(160deg,#241640,#2E1B52 45%,#173F5A);min-height:100vh}
+.kutu{max-width:940px;margin:0 auto}
+h1{font-size:30px;margin:0 0 4px;font-weight:900;letter-spacing:-.6px}
+.alt{color:#B9AEDA;font-weight:700;margin-bottom:18px}
+.kart{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:20px;padding:18px 20px;margin-bottom:14px;backdrop-filter:blur(10px)}
+.btn{border:0;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;padding:13px 22px;
+  border-radius:15px;background:#FFD34E;color:#4A3300;box-shadow:0 6px 0 #C99F16;transition:.14s}
+.btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #C99F16}
+.btn.ye{background:#22D3A5;color:#06392C;box-shadow:0 6px 0 #12A47F}
+.btn.mor{background:#A66BFF;color:#fff;box-shadow:0 6px 0 #7F49D6}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.satir{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label.sec{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;
+  background:rgba(255,255,255,.10);border-radius:12px;padding:8px 13px;cursor:pointer}
+input[type=checkbox]{width:18px;height:18px;accent-color:#22D3A5}
+.bar{height:14px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin:12px 0 6px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,#FFD34E,#22D3A5);transition:width .3s}
+#kayit{background:#120C22;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 14px;
+  font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;height:320px;overflow:auto;white-space:pre-wrap}
+.ok{color:#5BE3B8}.no{color:#FF9C93}.bilgi{color:#9FD0FF}.gri{color:#9A90BC}
+.rozet{display:inline-block;background:rgba(255,211,78,.18);border:1.5px dashed #FFD34E;color:#FFE9A8;
+  border-radius:12px;padding:5px 11px;font-size:13px;font-weight:900;margin-right:6px}
+.adim{font-size:14.5px;font-weight:800;color:#CFC4EC;margin:0 0 10px;line-height:1.6}
+.adim b{color:#FFD34E}
+code{background:rgba(255,255,255,.12);padding:2px 7px;border-radius:7px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="kutu">
+  <h1>🎙 Gemini Üretici</h1>
+  <div class="alt">Sanat Ormanı'nın Sırrı — seslendirme ve görselleri üretir, doğrudan proje klasörüne yazar.</div>
+
+  <div class="kart">
+    <p class="adim">
+      <b>1.</b> Aşağıdaki düğmeye bas → açılan pencerede <b>ekitap</b> klasörünü seç → <b>“Seç”</b> ve ardından <b>“Değişiklikleri kaydet”</b>e izin ver.<br>
+      <b>2.</b> Üretim başlar. Sesler <code>ses/</code>, görseller <code>gorseller/</code> klasörüne yazılır.<br>
+      <b>3.</b> Bitince <b>“Kitabı Aç”</b>a bas.
+    </p>
+    <div class="satir">
+      <button class="btn" id="btnBasla">📂 Klasörü Seç ve Üretimi Başlat</button>
+      <label class="sec"><input type="checkbox" id="cbSes" checked> Seslendirme (19)</label>
+      <label class="sec"><input type="checkbox" id="cbImg" checked> Görseller (16)</label>
+      <label class="sec"><input type="checkbox" id="cbYenile"> Var olanların üzerine yaz</label>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="satir">
+      <span class="rozet" id="rDurum">Hazır</span>
+      <span class="rozet" id="rSes">🔊 0/19</span>
+      <span class="rozet" id="rImg">🖼 0/16</span>
+      <button class="btn ye" id="btnAc" disabled>📖 Kitabı Aç</button>
+      <button class="btn mor" id="btnDur" disabled>⏹ Durdur</button>
+    </div>
+  </div>
+
+  <div class="kart"><div id="kayit"><span class="gri">Kayıt burada görünecek…</span></div></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Gemini üretici — tarayıcıda çalışır, dosyaları klasöre yazar
+   ══════════════════════════════════════════════════════════════ */
+const KOK="https://generativelanguage.googleapis.com/v1beta/models";
+const TTS_MODELLER=["gemini-2.5-flash-preview-tts","gemini-3.1-flash-tts-preview","gemini-2.5-pro-preview-tts"];
+const IMG_MODELLER=["gemini-3.1-flash-image","gemini-2.5-flash-image","gemini-3-pro-image"];
+const SES_ADI="Aoede";
+const STIL_YONERGE="Bir ilkokul 1. sınıf öğrencisine masal anlatan sıcak, neşeli ve şefkatli bir anlatıcı gibi, "+
+  "net bir Türkçe telaffuzla, biraz yavaş ve tane tane, cümle sonlarında kısa duraklar vererek, meraklandırıcı bir tonla oku:\n\n";
+
+const DENIZ="DENIZ, a cheerful 7-year-old Turkish first-grade child: round friendly face, warm light skin, big dark eyes, "+
+  "rosy cheeks, short wavy dark-brown hair, wearing a yellow t-shirt under blue denim dungarees (overalls) with two yellow "+
+  "buttons, and red sneakers. Always exactly the same character.";
+const FIRCA="FIRCACAN, a friendly talking magic paintbrush character: warm orange wooden handle, silver ferrule, bright blue "+
+  "bristles, with two big cartoon eyes and a small smile on the handle, tiny golden sparkles around it.";
+const STIL=" Style: flat vector children's picture-book illustration, thick soft dark-brown outlines, rounded friendly shapes, "+
+  "limited palette of coral red #FF5A4E, sunny yellow #FFD34E, mint green #22D3A5, sky blue #3FA9F5, violet #A66BFF on a warm "+
+  "cream background #FFF8EC. Simple and uncluttered, NO text, NO letters, NO numbers anywhere in the image, no watermark, "+
+  "safe and cheerful for 6-7 year olds. Wide 16:9 composition with generous empty space on one side for text.";
+
+const KARAKTER="Character reference sheet on a plain cream background, three views side by side: (1) "+DENIZ+
+  " standing and smiling, front view. (2) the same child in three-quarter view, waving. (3) "+FIRCA+" floating next to the child."+STIL;
+
+const GORSELLER=[
+ ["01_kapak","Storybook cover illustration. "+DENIZ+" stands smiling in the centre with arms slightly open. "+FIRCA+
+  " floats beside the child. Around them float a red straight line, a blue wavy line, a yellow zigzag, a purple circle, a green "+
+  "triangle and a rainbow arc, like a burst of art magic. A big soft pale-yellow glow behind them."+STIL],
+ ["02_bahce",DENIZ+" kneels under a big green tree in a sunny school garden and picks up an old paintbrush from the grass. The "+
+  "paintbrush is "+FIRCA+" — its eyes are just opening, tiny golden sparkles around it. A simple school building with a red roof behind."+STIL],
+ ["03_kapi","A completely COLOURLESS, grey and faded forest — grey trees, pale drooping flowers, washed-out sky. In the middle "+
+  "stands a glowing magic doorway with a bright violet frame and warm yellow light pouring out — the only colour in the whole "+
+  "picture. "+DENIZ+" stands in front of the doorway with "+FIRCA+" floating beside. Melancholic but hopeful."+STIL],
+ ["04_harita","A cute hand-drawn treasure map of a magic art forest on aged cream paper, with a dashed violet path winding "+
+  "between four stops: a blue winding river, tall geometric purple rock formations, a three-coloured waterfall (red, yellow, blue), "+
+  "and a dark cave entrance. Small trees and hills around. Top-down storybook map view. NO text or labels."+STIL],
+ ["05_nehir","A wide blue river whose surface is made of drawn LINES: a straight line, a wavy line, a zigzag line and a curly line, "+
+  "each in a different colour, floating on the water. A friendly long light-blue water snake with big eyes (the guardian KIVRIM) "+
+  "rises smoothly from the water in a wavy S shape. "+DENIZ+" stands on the bank in wonder, "+FIRCA+" nearby."+STIL],
+ ["06_cizgiler","Four huge thick coloured lines floating separately on a plain cream background, clearly separated and stacked: a "+
+  "straight red line, a blue wavy line, a yellow zigzag line and a purple curly line. Flashcard style, no people, no text."+STIL],
+ ["08_kayalik","Tall purple rock formations shaped like perfect geometric solids — cubes, pyramids, cylinders and spheres — stacked "+
+  "into cliffs. On top perches KOSE, a friendly owl whose whole body is built from geometric shapes: a triangle head, a square body, "+
+  "two big circular eyes, a yellow triangular beak. "+DENIZ+" stands below looking up."+STIL],
+ ["09_sekiller","Eight items arranged in two clearly separated rows on a plain cream background: top row a basketball, a slice of "+
+  "pizza, a wooden door and a square window; bottom row a large yellow circle, a red triangle, a blue rectangle and a green square. "+
+  "Flashcard style, no people, no text."+STIL],
+ ["11_selale","A magical waterfall with three separate falls of paint — bright red, bright yellow and bright blue — pouring into a "+
+  "pool below where they mix into orange, green and purple swirls. EBRU, a friendly butterfly whose four wings are red, yellow, "+
+  "purple and green, flies above the pool. "+DENIZ+" stands at the edge, delighted."+STIL],
+ ["12_renkler","Three horizontal rows on a plain cream background; each row shows two big round paint blobs and an empty white "+
+  "circle after them: row one red and yellow, row two yellow and blue, row three red and blue. Clean, simple, no people, no text."+STIL],
+ ["14_magara","Inside a cosy cave with glowing crystals on the walls. Along the cave floor lie four objects with strongly exaggerated "+
+  "surfaces: a rough grey stone, a soft yellow sponge, a smooth shiny glass pane and a green leaf with visible veins. PUTUR, a small "+
+  "friendly brown hedgehog with soft spines, stands among them. "+DENIZ+" kneels and reaches out a hand to touch."+STIL],
+ ["15_dokular","Five large texture swatch cards in a row on a plain cream background: a rough grey stone surface, a soft yellow "+
+  "sponge, a smooth clear glass with a highlight, a green leaf with veins, and a pink woven fabric. Clearly separated, flashcard "+
+  "style, no people, no text."+STIL],
+ ["16_galeri","A small bright forest art gallery: four children's paintings hang in simple wooden frames on a light wall — one of "+
+  "joyful colourful circles, one calm in soft blues, one energetic with bold zigzags on a dark background, and one earthy with "+
+  "layered rough textures. "+DENIZ+" stands looking at them thoughtfully, "+FIRCA+" floating beside."+STIL],
+ ["17_tuval",DENIZ+" stands happily in front of a wooden easel, holding a palette, with "+FIRCA+" in the other hand. On the white "+
+  "canvas the child has painted a straight line, a wavy line, a yellow circle, a green square and a purple triangle. Bright and "+
+  "encouraging mood."+STIL],
+ ["19_final","The magic forest has burst back into full colour: lush green trees, bright flowers, a huge rainbow arc across the sky, "+
+  "wavy lines in the grass, triangular treetops, circular clouds. "+DENIZ+" stands in the middle with arms raised in joy, "+FIRCA+
+  " spinning happily above. Warm golden light, celebratory."+STIL],
+];
+
+/* ── arayüz yardımcıları ── */
+const K=document.getElementById('kayit');
+const yaz=(m,s='')=>{const d=document.createElement('div');if(s)d.className=s;d.textContent=m;K.appendChild(d);K.scrollTop=K.scrollHeight};
+const durum=t=>document.getElementById('rDurum').textContent=t;
+let toplamIs=0,bitenIs=0,dur=false;
+function ilerle(){document.getElementById('bar').style.width=(toplamIs?bitenIs/toplamIs*100:0)+'%'}
+
+/* ── API ── */
+let ANAHTAR="";
+async function istek(model,govde){
+  const r=await fetch(`${KOK}/${model}:generateContent`,{method:"POST",
+    headers:{"x-goog-api-key":ANAHTAR,"Content-Type":"application/json"},body:JSON.stringify(govde)});
+  const t=await r.text();
+  if(!r.ok)throw new Error(`${model} HTTP ${r.status} ${t.slice(0,160)}`);
+  const j=JSON.parse(t);
+  for(const c of (j.candidates||[]))for(const p of (c.content?.parts||[])){
+    const d=p.inlineData||p.inline_data; if(d&&d.data)return{mime:d.mimeType||d.mime_type||"",b64:d.data};
+  }
+  throw new Error(`${model}: yanıtta veri yok`);
+}
+const b64bin=b=>{const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u};
+function wavYap(pcm,hz){
+  const h=new ArrayBuffer(44),v=new DataView(h);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,"RIFF");v.setUint32(4,36+pcm.length,true);w(8,"WAVE");w(12,"fmt ");
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,hz,true);v.setUint32(28,hz*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+  w(36,"data");v.setUint32(40,pcm.length,true);
+  const o=new Uint8Array(44+pcm.length);o.set(new Uint8Array(h),0);o.set(pcm,44);return o;
+}
+async function coklu(modeller,govdeYap){
+  let son=null;
+  for(const m of modeller){ try{ return await istek(m,govdeYap(m)); }catch(e){ son=e; } }
+  throw son;
+}
+
+/* ── dosya sistemi ── */
+let kok=null;
+async function dosyaYaz(klasor,ad,veri){
+  const d=await kok.getDirectoryHandle(klasor,{create:true});
+  const f=await d.getFileHandle(ad,{create:true});
+  const w=await f.createWritable(); await w.write(veri); await w.close();
+}
+async function varMi(klasor,adlar){
+  try{ const d=await kok.getDirectoryHandle(klasor,{create:true});
+    for(const a of adlar){ try{ await d.getFileHandle(a); return true; }catch(e){} }
+  }catch(e){}
+  return false;
+}
+
+/* ── ana akış ── */
+document.getElementById('btnBasla').onclick=async()=>{
+  K.innerHTML=''; dur=false; document.getElementById('btnDur').disabled=false;
+  try{
+    yaz("📂 Klasör seçiliyor… açılan pencerede 'ekitap' klasörünü seç.","bilgi");
+    kok=await window.showDirectoryPicker({mode:'readwrite'});
+    if(await kok.requestPermission({mode:'readwrite'})!=='granted'){yaz("❌ Yazma izni verilmedi.","no");return}
+    yaz("✅ Klasör: "+kok.name,"ok");
+
+    // .env
+    try{
+      const f=await kok.getFileHandle('.env'); const t=await (await f.getFile()).text();
+      const m=t.match(/(?:GEMINI_API_KEY|GOOGLE_API_KEY|API_KEY)\s*=\s*["']?([^"'\s#]+)/);
+      if(m)ANAHTAR=m[1];
+    }catch(e){}
+    if(!ANAHTAR){ ANAHTAR=(prompt("API anahtarını yapıştır (.env bulunamadı):")||"").trim(); }
+    if(!ANAHTAR){yaz("❌ Anahtar yok.","no");return}
+    yaz("🔑 Anahtar okundu ("+ANAHTAR.slice(0,6)+"…"+ANAHTAR.slice(-4)+")","ok");
+
+    // metinler
+    let metinler=[];
+    try{
+      const f=await kok.getFileHandle('index.html'); const ham=await (await f.getFile()).text();
+      metinler=[...ham.matchAll(/<section class="sayfa[^"]*"\s+data-ses="([^"]*)"/g)].map(m=>
+        m[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'"));
+    }catch(e){}
+    yaz("📖 index.html içinde "+metinler.length+" anlatım metni bulundu","bilgi");
+
+    const sesAc=document.getElementById('cbSes').checked && metinler.length>0;
+    const imgAc=document.getElementById('cbImg').checked;
+    const yenile=document.getElementById('cbYenile').checked;
+    toplamIs=(sesAc?metinler.length:0)+(imgAc?GORSELLER.length+1:0); bitenIs=0; ilerle();
+    document.getElementById('btnBasla').disabled=true;
+
+    /* ---- SESLER ---- */
+    if(sesAc){
+      durum("Seslendirme üretiliyor…"); yaz("\n══ SESLENDİRME ══","bilgi");
+      let n=0;
+      for(let i=0;i<metinler.length;i++){
+        if(dur)break;
+        const ad="s"+String(i+1).padStart(2,'0');
+        if(!yenile && await varMi('ses',[ad+".mp3",ad+".wav"])){
+          yaz(`  [${i+1}/${metinler.length}] ⏭  ${ad} zaten var`,"gri"); n++;bitenIs++;ilerle();
+          document.getElementById('rSes').textContent=`🔊 ${n}/${metinler.length}`; continue;
+        }
+        let tamam=false;
+        for(let d=0;d<3&&!tamam;d++){
+          try{
+            const g=await coklu(TTS_MODELLER,()=>({
+              contents:[{parts:[{text:STIL_YONERGE+metinler[i]}]}],
+              generationConfig:{responseModalities:["AUDIO"],
+                speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:SES_ADI}}}}}));
+            const pcm=b64bin(g.b64);
+            const hz=parseInt((g.mime.match(/rate=(\d+)/)||[])[1]||"24000",10);
+            const wav=wavYap(pcm,hz);
+            await dosyaYaz('ses',ad+".wav",wav);
+            yaz(`  [${i+1}/${metinler.length}] ✅ ses/${ad}.wav  ${(wav.length/1024).toFixed(0)} KB · ${(pcm.length/2/hz).toFixed(1)} sn`,"ok");
+            tamam=true;
+          }catch(e){ yaz(`  [${i+1}/${metinler.length}] ⚠️ deneme ${d+1}: ${String(e).slice(0,150)}`,"no");
+            await new Promise(r=>setTimeout(r,4000+d*4000)); }
+        }
+        n++;bitenIs++;ilerle();document.getElementById('rSes').textContent=`🔊 ${n}/${metinler.length}`;
+        await new Promise(r=>setTimeout(r,900));
+      }
+    }
+
+    /* ---- GÖRSELLER ---- */
+    if(imgAc && !dur){
+      durum("Görseller üretiliyor…"); yaz("\n══ GÖRSELLER ══","bilgi");
+      let referans=null,n=0;
+      try{
+        const d=await kok.getDirectoryHandle('gorseller',{create:true});
+        if(!yenile){ const f=await d.getFileHandle('00_karakterler.png');
+          referans=new Uint8Array(await (await f.getFile()).arrayBuffer());
+          yaz("  ♻️  Mevcut karakter sayfası kullanılıyor","gri"); }
+      }catch(e){}
+      if(!referans){
+        yaz("  🎨 Karakter sayfası (Deniz + Fırçacan) üretiliyor…","bilgi");
+        try{
+          const g=await coklu(IMG_MODELLER,()=>({contents:[{role:"user",parts:[{text:KARAKTER}]}],
+            generationConfig:{responseModalities:["IMAGE","TEXT"]}}));
+          referans=b64bin(g.b64); await dosyaYaz('gorseller','00_karakterler.png',referans);
+          yaz("      ✅ gorseller/00_karakterler.png","ok");
+        }catch(e){ yaz("      ⚠️ üretilemedi, referanssız devam: "+String(e).slice(0,140),"no"); }
+      }
+      bitenIs++;ilerle();
+      const refB64=referans?btoa(String.fromCharCode(...new Uint8Array(referans))):null;
+      for(let i=0;i<GORSELLER.length;i++){
+        if(dur)break;
+        const [ad,prompt]=GORSELLER[i];
+        if(!yenile && await varMi('gorseller',[ad+".png"])){
+          yaz(`  [${i+1}/${GORSELLER.length}] ⏭  ${ad}.png zaten var`,"gri");
+          n++;bitenIs++;ilerle();document.getElementById('rImg').textContent=`🖼 ${n+1}/16`; continue;
+        }
+        let tamam=false;
+        for(let d=0;d<3&&!tamam;d++){
+          try{
+            const parcalar=[];
+            if(refB64)parcalar.push({inline_data:{mime_type:"image/png",data:refB64}});
+            parcalar.push({text:prompt});
+            if(refB64)parcalar.push({text:"Use the characters from the reference image EXACTLY as they are — same face, same hair, same clothes, same colours. Do not redesign them."});
+            const g=await coklu(IMG_MODELLER,()=>({contents:[{role:"user",parts:parcalar}],
+              generationConfig:{responseModalities:["IMAGE","TEXT"]}}));
+            const png=b64bin(g.b64); await dosyaYaz('gorseller',ad+".png",png);
+            yaz(`  [${i+1}/${GORSELLER.length}] ✅ gorseller/${ad}.png  ${(png.length/1024).toFixed(0)} KB`,"ok");
+            tamam=true;
+          }catch(e){ yaz(`  [${i+1}/${GORSELLER.length}] ⚠️ deneme ${d+1}: ${String(e).slice(0,150)}`,"no");
+            await new Promise(r=>setTimeout(r,4000+d*4000)); }
+        }
+        n++;bitenIs++;ilerle();document.getElementById('rImg').textContent=`🖼 ${n+1}/16`;
+        await new Promise(r=>setTimeout(r,1200));
+      }
+    }
+
+    durum(dur?"Durduruldu":"Bitti ✅");
+    yaz("\n🎉 "+(dur?"Durduruldu.":"Tamamlandı! Artık 'Kitabı Aç' düğmesine basabilirsin."),"ok");
+    document.getElementById('btnAc').disabled=false;
+    document.getElementById('btnBasla').disabled=false;
+  }catch(e){
+    yaz("❌ "+String(e).slice(0,300),"no");
+    durum("Hata"); document.getElementById('btnBasla').disabled=false;
+  }
+};
+document.getElementById('btnDur').onclick=()=>{dur=true;durum("Durduruluyor…")};
+document.getElementById('btnAc').onclick=()=>location.href='index.html';
+
+if(!window.showDirectoryPicker){
+  yaz("⚠️ Bu tarayıcı klasöre yazmayı desteklemiyor. Lütfen Chrome kullan.","no");
+  yaz("   (Safari/Firefox desteklemiyor — Chrome ile aç: http://localhost:8000/uretici.html)","gri");
+}
+</script>
+</body>
+</html>
